@@ -22,28 +22,10 @@ import hashlib
 
 def setup_retrieval():
     
-    # -- SETUP CONFIGURATION --
-
-    # Configure the secrets keys (Streamlit Version)
-    secrets = st.secrets['general']
-    OPENROUTER_API_KEY = secrets['OPENROUTER_API_KEY']
-    MISTRAL_API_KEY = secrets['MISTRAL_API_KEY']
-    HF_TOKEN = secrets['HF_TOKEN']
-    PERSIST_PATH = secrets['PERSIST_PATH']
-
-    # Multi Query Retrieval setup
-    N_PARAPHRASES = 3            # number of paraphrases to generate
-    MAX_MERGED_DOCS = 5          # final docs to return after dedupe
-    PARAPHRASE_CACHE_SIZE = 512
-    RETRIEVAL_CACHE_SIZE = 2048
-
     # -- SETUP EMBEDDINGS --
     
     # Embedding model setup
-    embeddings = MistralAIEmbeddings(
-        model="mistral-embed",
-        api_key=MISTRAL_API_KEY
-    )
+    embeddings = get_embedding_models()
 
     cache_dir = LocalFileStore(f"{PERSIST_PATH}/embedding_cache")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
