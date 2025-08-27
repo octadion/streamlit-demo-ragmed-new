@@ -1,10 +1,19 @@
 # -- IMPORT --
 
+# state scheme import
+from pydantic import BaseModel, Field, SecretStr
+from typing import List, Dict, Any, Annotated, Optional
+from typing_extensions import TypedDict
+
 # llm langchain import
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
+from langchain_openai import ChatOpenAI
 
 # env import
 from config import MISTRAL_API_KEY, OPENROUTER_API_KEY, HF_TOKEN 
+
+# langchain import
+from langchain_core.utils.utils import secret_from_env
 
 # -- SETUP SCHEMA STATE --
 
