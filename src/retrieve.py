@@ -22,6 +22,7 @@ import hashlib
 
 # other py files import
 from config import PERSIST_PATH
+from .llm import get_embedding_models
 
 def setup_retrieval():
     
