@@ -1,7 +1,7 @@
 # -- IMPORT --
 
 # llm langchain import
-from mistralai.client import ChatMistralAI, MistralAIEmbeddings
+from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
 
 # env import
 from config import MISTRAL_API_KEY, OPENROUTER_API_KEY, HF_TOKEN 
