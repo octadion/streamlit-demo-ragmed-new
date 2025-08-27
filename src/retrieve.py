@@ -3,33 +3,20 @@
 # import streamlit keys
 import streamlit as st
 
-# state scheme import
-from pydantic import BaseModel, Field, SecretStr
-from typing import List, Dict, Any, Annotated, Optional
-from typing_extensions import TypedDict
-
 # env import
 import os
 import glob
 from dotenv import load_dotenv
 
 # llm langchain import
-from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
-
-# langgraph import
-from langgraph.graph import StateGraph, END
-from langgraph.graph.message import add_messages
+from langchain_mistralai import MistralAIEmbeddings
 
 # langchain import
-from langchain.schema import Document, HumanMessage, SystemMessage
-from langchain_core.utils.utils import secret_from_env
 from langchain_community.vectorstores import SKLearnVectorStore
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 
 # misc import
-import operator, json
-import time
 from functools import lru_cache
 import hashlib
 
@@ -50,6 +37,8 @@ def setup_retrieval():
     PARAPHRASE_CACHE_SIZE = 512
     RETRIEVAL_CACHE_SIZE = 2048
 
+    # -- SETUP EMBEDDINGS --
+    
     # Embedding model setup
     embeddings = MistralAIEmbeddings(
         model="mistral-embed",
