@@ -52,7 +52,7 @@ def setup_graph():
     llm = get_llm()
     
     # LLM setup (json)
-    llm_json = get_llm_json(llm, Grader)
+    llm_json = get_llm_json(llm)
 
     # -- SETUP RETRIEVAL --
     retrievers = r.setup_retrieval()

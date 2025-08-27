@@ -65,6 +65,6 @@ def get_embedding_models():
     )
 
 
-def get_llm_json(llm, output_schema):
+def get_llm_json(llm):
     """Return LLM with structured output enabled."""
-    return llm.with_structured_output(output_schema)
+    return llm.with_structured_output(Grader)
