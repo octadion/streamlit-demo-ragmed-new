@@ -39,51 +39,12 @@ from . import retrieve as r
 from .llm import get_llm, get_llm_json
 from .prompts import *
 
-# -- SETUP CONFIGURATION --
-
-# Configure the secrets keys (Streamlit Version)
-secrets = st.secrets['general']
-OPENROUTER_API_KEY = secrets['OPENROUTER_API_KEY']
-MISTRAL_API_KEY = secrets['MISTRAL_API_KEY']
-HF_TOKEN = secrets['HF_TOKEN']
-PERSIST_PATH = secrets['PERSIST_PATH']
-
 # Multi Query Retrieval setup
 N_PARAPHRASES = 3            # number of paraphrases to generate
 MAX_MERGED_DOCS = 5          # final docs to return after dedupe
 PARAPHRASE_CACHE_SIZE = 512
 RETRIEVAL_CACHE_SIZE = 2048
-
-# -- SETUP SCHEMA STATE --
-
-# Define the state schema for the pipeline
-class ChatState(BaseModel):
-    messages: List[Dict[str, Any]]
-
-# Define OpenRouter integration with langchain
-class ChatOpenRouter(ChatOpenAI):
-    openai_api_key: Optional[SecretStr] = Field(
-        alias="api_key", default_factory=secret_from_env("OPENROUTER_API_KEY", default=None)
-    )
-    
-    @property
-    def lc_secrets(self) -> dict[str, str]:
-        return {"openai_api_key": "OPENROUTER_API_KEY"}
-
-    def __init__(self,
-                 openai_api_key: Optional[str] = None,
-                 **kwargs):
-        openai_api_key = openai_api_key or os.environ.get("OPENROUTER_API_KEY")
-        super().__init__(base_url="https://openrouter.ai/api/v1", openai_api_key=openai_api_key, **kwargs)
-        
-        
-# -- SETUP DOCUMENT RELEVANCE --
-
-# Setup document relevance & hallucination grader
-class Grader(BaseModel):
-    binary_score: str = Field(..., description="Either 'yes' or 'no'") # document relevance
-     
-        
+             
 def setup_graph():
     # -- SETUP LLM --
 

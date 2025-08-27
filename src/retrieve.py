@@ -20,6 +20,9 @@ from langchain.storage import LocalFileStore
 from functools import lru_cache
 import hashlib
 
+# other py files import
+from config import PERSIST_PATH
+
 def setup_retrieval():
     
     # -- SETUP EMBEDDINGS --
