@@ -1,0 +1,141 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-py"
+  enable_experimental_decimal = true
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector(schema: "public")]
+}
+
+model Bot {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Model Configuration
+  model             String   @default("mistral-small-latest")
+  provider          String   @default("mistral")
+  temperature       Float    @default(0.7)
+  max_tokens        Int      @default(1000)
+  
+  // RAG Configuration
+  top_k             Int      @default(3)
+  similarity_threshold Float @default(0.7)
+  use_reranking     Boolean  @default(true)
+  use_multi_query   Boolean  @default(true)
+  enable_chat_history Boolean @default(true)
+  
+  // Advanced RAG Configuration (NEW)
+  use_advanced_rag  Boolean  @default(false)
+  max_retries       Int      @default(3)
+  
+  // Prompts
+  system_prompt     String   @default("You are a helpful AI assistant.")
+  rag_prompt        String   @default("Answer the question based on the following context: {context}\n\nQuestion: {question}\nAnswer:")
+  
+  // Features
+  enable_internet_search Boolean @default(false)
+  
+  // API Configuration
+  api_key           String?
+  
+  // Relations
+  documents         BotDocument[]
+  sources           BotSource[]
+  chat_history      ChatHistory[]
+  integrations      BotIntegration[]
+  
+  @@map("bots")
+}
+
+model BotSource {
+  id            String   @id @default(cuid())
+  botId         String
+  name          String
+  type          String   @default("file") // file, url, text
+  file_path     String?
+  url           String?
+  content       String?  @db.Text
+  file_size_mb  Float    @default(0)
+  status        String   @default("pending") // pending, processing, completed, failed
+  error_message String?
+  metadata      Json     @default("{}")  // NEW: tambah ini
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  bot           Bot           @relation(fields: [botId], references: [id], onDelete: Cascade)
+  documents     BotDocument[]
+  
+  @@map("bot_sources")
+}
+
+model BotDocument {
+  id            Int      @id @default(autoincrement())
+  botId         String
+  sourceId      String
+  content       String   @db.Text
+  embedding     Unsupported("vector")
+  metadata      Json     @default("{}")
+  chunk_index   Int      @default(0)
+  token_count   Int      @default(0)
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  bot           Bot       @relation(fields: [botId], references: [id], onDelete: Cascade)
+  source        BotSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  
+  @@map("bot_documents")
+}
+
+model ChatHistory {
+  id            String   @id @default(cuid())
+  botId         String
+  platform      String   @default("api") // api, whatsapp, telegram
+  user_id       String
+  session_id    String?
+  human_message String   @db.Text
+  ai_message    String   @db.Text
+  metadata      Json     @default("{}")
+  sources       Json?    // Retrieved documents
+  trace_id      String?
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  bot           Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@map("chat_history")
+}
+
+model BotIntegration {
+  id                String   @id @default(cuid())
+  botId             String
+  platform          String   // whatsapp, telegram
+  is_active         Boolean  @default(false)
+  
+  // WhatsApp Configuration
+  whatsapp_token    String?
+  whatsapp_verify_token String?
+  whatsapp_phone_number String?
+  
+  // Telegram Configuration
+  telegram_token    String?
+  telegram_webhook_url String?
+  
+  // Configuration
+  config            Json     @default("{}")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  bot               Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@unique([botId, platform])
+  @@map("bot_integrations")
+}

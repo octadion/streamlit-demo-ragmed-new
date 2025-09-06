@@ -5,5 +5,17 @@ langchain
 langchain-community
 langchain_mistralai
 langchain_openai
+langchain-google-genai
 pydantic
 scikit-learn
+prisma~=0.15.0
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+PyPDF2==3.0.1
+requests
+beautifulsoup4==4.12.2
+httpx==0.25.2
+plotly
+pandas
