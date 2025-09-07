@@ -251,13 +251,13 @@ class DocumentService:
             search_results = []
             for result in results:
                 source = await prisma.botsource.find_unique(
-                    where={"id": result["id"]},
+                    where={"id": result["source_id"]},
                     select={"name": True}
                 )
                 
                 search_results.append({
                     "content": result["content"],
-                    "metadata": result["metadata"], 
+                    "metadata": result["metadata"],
                     "similarity": result["similarity"],
                     "source_name": source.name if source else "Unknown"
                 })
@@ -281,24 +281,38 @@ class DocumentService:
             query_embedding = await self.embedding_service.generate_single_embedding(query)
             query_vector = f"[{','.join(map(str, query_embedding))}]"
 
-            base_query = f"""
-            SELECT * FROM vector_similarity_search(
-                '{query_vector}'::vector,
-                '{bot_id}'::text,
-                {top_k}::int,
-                {similarity_threshold}::float
-            )
-            """
-
             if domain:
-                full_query = f"""
-                {base_query}
-                WHERE (metadata->>'medical_domain' = '{domain}' OR metadata->>'medical_domain' IS NULL)
-                """
+                results = await prisma.query_raw(
+                    f"""
+                    SELECT 
+                        bd.content,
+                        bd.metadata,
+                        1 - (bd.embedding <=> '{query_vector}'::vector) as similarity,
+                        bd."sourceId" as source_id
+                    FROM bot_documents bd
+                    WHERE bd."botId" = '{bot_id}'
+                    AND 1 - (bd.embedding <=> '{query_vector}'::vector) >= {similarity_threshold}
+                    AND (bd.metadata->>'medical_domain' = '{domain}' OR bd.metadata->>'medical_domain' IS NULL)
+                    ORDER BY bd.embedding <=> '{query_vector}'::vector
+                    LIMIT {top_k}
+                    """
+                )
             else:
-                full_query = base_query
-
-            results = await prisma.query_raw(full_query)
+                results = await prisma.query_raw(
+                    f"""
+                    SELECT 
+                        id as source_id,
+                        content,
+                        metadata,
+                        similarity
+                    FROM vector_similarity_search(
+                        '{query_vector}'::vector,
+                        '{bot_id}'::text,
+                        {top_k}::int,
+                        {similarity_threshold}::float
+                    )
+                    """
+                )
             
             search_results = []
             for result in results:
@@ -317,6 +331,7 @@ class DocumentService:
             return search_results
             
         except Exception as e:
+            print(f"Domain search error details: {e}")
             raise ValueError(f"Domain search failed: {str(e)}")
 
 
