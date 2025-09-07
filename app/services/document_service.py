@@ -251,13 +251,13 @@ class DocumentService:
             search_results = []
             for result in results:
                 source = await prisma.botsource.find_unique(
-                    where={"id": result["source_id"]},
+                    where={"id": result["id"]},
                     select={"name": True}
                 )
                 
                 search_results.append({
                     "content": result["content"],
-                    "metadata": result["metadata"],
+                    "metadata": result["metadata"], 
                     "similarity": result["similarity"],
                     "source_name": source.name if source else "Unknown"
                 })
