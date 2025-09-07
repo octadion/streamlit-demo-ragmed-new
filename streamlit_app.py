@@ -787,7 +787,7 @@ elif page == "Integration Setup":
                 
                 webhook_url = st.text_input("Webhook URL (auto-generated)", 
                                 value=f"https://6efa31ebe192.ngrok-free.app/api/v1/integrations/webhook/telegram/{selected_bot_id}",
-                                disabled=True)
+                                disabled=False)
                 
                 submitted = st.form_submit_button("💾 Save Telegram Config")
                 
