@@ -10,7 +10,7 @@ from app.models.integration import (
 )
 from app.models.chat import ChatRequest, Platform
 from app.services.chat_service import ChatService
-
+from prisma import Json
 
 class IntegrationService:
     def __init__(self):
@@ -225,7 +225,7 @@ class IntegrationService:
                 
                 await prisma.botintegration.update(
                     where={"id": integration.id},
-                    data={"config": config}
+                    data={"config": Json(config)}
                 )
                 
                 return True
@@ -269,7 +269,7 @@ class IntegrationService:
                     
                     await prisma.botintegration.update(
                         where={"id": integration.id},
-                        data={"config": config}
+                        data={"config": Json(config)}
                     )
                     
                     print(f"Telegram webhook set successfully: {webhook_url}")
@@ -311,8 +311,7 @@ class IntegrationService:
                     "botId": bot_id,
                     "platform": platform.value
                 },
-                order={"createdAt": "desc"},
-                select={"createdAt": True}
+                order={"createdAt": "desc"}
             )
             
             return {
