@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Query, Request
 from fastapi.responses import PlainTextResponse
 from typing import List, Dict, Any
-
+from prisma import Json
 from app.auth import get_global_auth
 from app.database import prisma
 from app.models.integration import (
@@ -43,7 +43,7 @@ async def create_integration(
             data={
                 "botId": bot_id,
                 "platform": integration_data.platform.value,
-                "config": integration_data.config,
+                "config": Json(integration_data.config),
                 "is_active": False
             }
         )
@@ -129,7 +129,7 @@ async def update_integration(
 
         update_data = {}
         if integration_data.config is not None:
-            update_data["config"] = integration_data.config
+            update_data["config"] = Json(integration_data.config)
         if integration_data.is_active is not None:
             update_data["is_active"] = integration_data.is_active
         
