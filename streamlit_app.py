@@ -218,8 +218,8 @@ elif page == "Bot Management":
                 bot_description = st.text_area("Description", placeholder="RAG chatbot for medical queries")
                 provider = st.selectbox("LLM Provider", ["mistral", "openai", "gemini"])
                 model = st.text_input("Model", value="mistral-small-latest" if provider == "mistral" else "")
-                use_advanced_rag = st.checkbox("Enable Advanced RAG", False)
-                max_retries = st.number_input("Max Retries (Advanced RAG)", 1, 10, 3)
+                use_advanced_rag = st.checkbox("Enable Advanced Medical RAG", False)
+                max_retries = st.number_input("Max Retries (Advanced Medical RAG)", 1, 10, 3)
             
             with col2:
                 temperature = st.slider("Temperature", 0.0, 2.0, 0.7, 0.1)
@@ -402,14 +402,14 @@ elif page == "Document Management":
                 medical_domain = None
                 if is_advanced_rag:
                     medical_domain = st.selectbox(
-                        "Medical Domain (Required for Advanced RAG)",
+                        "Medical Domain (Required for Advanced Medical RAG)",
                         options=["", "RA", "SLE", "Arthritis", "Spondyloarthritis", "Vasculitis"],
-                        help="Select medical domain for better routing in Advanced RAG"
+                        help="Select medical domain for better routing in Advanced Medical RAG"
                     )
                     if not medical_domain:
-                        st.warning("⚠️ Medical domain is recommended for Advanced RAG bots")
+                        st.warning("⚠️ Medical domain is recommended for Advanced Medical RAG bots")
                 else:
-                    st.info("ℹ️ Medical domain selection available for Advanced RAG bots only")
+                    st.info("ℹ️ Medical domain selection available for Advanced Medical RAG bots only")
                 
                 submitted = st.form_submit_button("📤 Upload Text")
                 
@@ -442,15 +442,15 @@ elif page == "Document Management":
             medical_domain_file = None
             if is_advanced_rag:
                 medical_domain_file = st.selectbox(
-                    "Medical Domain (Required for Advanced RAG)",
+                    "Medical Domain (Required for Advanced Medical RAG)",
                     options=["", "RA", "SLE", "Arthritis", "Spondyloarthritis", "Vasculitis"],
                     key="file_domain",
-                    help="Select medical domain for better routing in Advanced RAG"
+                    help="Select medical domain for better routing in Advanced Medical RAG"
                 )
                 if not medical_domain_file:
-                    st.warning("⚠️ Medical domain is recommended for Advanced RAG bots")
+                    st.warning("⚠️ Medical domain is recommended for Advanced Medical RAG bots")
             else:
-                st.info("ℹ️ Medical domain selection available for Advanced RAG bots only")
+                st.info("ℹ️ Medical domain selection available for Advanced Medical RAG bots only")
             
             if uploaded_file and st.button("Upload File"):
                 if uploaded_file.size > 10 * 1024 * 1024:
@@ -489,7 +489,7 @@ elif page == "Document Management":
                     "Medical Domain (Optional)",
                     options=["", "RA", "SLE", "Arthritis", "Spondyloarthritis", "Vasculitis"],
                     key="url_domain",
-                    help="Select medical domain for better routing in Advanced RAG"
+                    help="Select medical domain for better routing in Advanced Medical RAG"
                 )
                 
                 submitted = st.form_submit_button("Upload URL")
