@@ -701,8 +701,8 @@ elif page == "Integration Setup":
                 phone_number_id = st.text_input("Phone Number ID*", help="From WhatsApp Business API")
                 
                 webhook_url = st.text_input("Webhook URL (auto-generated)", 
-                                          value=f"{API_BASE_URL}/api/v1/integrations/webhook/whatsapp/{selected_bot_id}",
-                                          disabled=True)
+                                          value=f"https://a323e10366de.ngrok-free.app/api/v1/integrations/webhook/whatsapp/{selected_bot_id}",
+                                          disabled=False)
                 
                 submitted = st.form_submit_button("💾 Save WhatsApp Config")
                 
@@ -786,7 +786,7 @@ elif page == "Integration Setup":
                 bot_token = st.text_input("Bot Token*", type="password", help="From @BotFather")
                 
                 webhook_url = st.text_input("Webhook URL (auto-generated)", 
-                                value=f"https://6efa31ebe192.ngrok-free.app/api/v1/integrations/webhook/telegram/{selected_bot_id}",
+                                value=f"https://a323e10366de.ngrok-free.app/api/v1/integrations/webhook/telegram/{selected_bot_id}",
                                 disabled=False)
                 
                 submitted = st.form_submit_button("💾 Save Telegram Config")
